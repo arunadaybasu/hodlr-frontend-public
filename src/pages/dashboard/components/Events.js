@@ -1,13 +1,17 @@
 import React from 'react';
 
+import { List, ListItem, ListItemText } from '@mui/material';
+
 export function Events({ events }) {
   return (
-    <ul>
+    <List>
     {
       events.map((event, index) =>
-        <li key={ index }>{ event }</li>
+        <ListItem key={ index }>
+            <ListItemText primary={ event } />
+        </ListItem>
       )
     }
-    </ul>
+    </List>
   );
 }
