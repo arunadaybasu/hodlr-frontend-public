@@ -12,7 +12,7 @@ export function MyForm() {
     // setIsLoading(true);
     console.log("Message - " + value);
 
-    socket.emit('create-something', value, () => {
+    socket.emit('chat-message-2', value, () => {
       // setIsLoading(false);
       console.log("Emitted - " + value);
     });

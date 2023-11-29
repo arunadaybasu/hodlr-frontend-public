@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { socket } from './socket';
 import { ConnectionState } from './components/ConnectionState';
 import { ConnectionManager } from './components/ConnectionManager';
-import { Events } from "./components/Events";
+import { Events } from './components/Events';
 import { MyForm } from './components/MyForm';
 
 // material-ui
@@ -81,36 +81,44 @@ const DashboardDefault = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
 
+  async function onConnect() {
+    setIsConnected(true);
+  }
+
+  async function onDisconnect() {
+    setIsConnected(false);
+  }
+
+  async function onFooEvent(value) {
+    console.log(value);
+    setFooEvents((previous) => [...previous, value]);
+  }
+
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    function onFooEvent(value) {
-      setFooEvents(previous => [...previous, value]);
-    }
-
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    socket.on('foo', onFooEvent);
+
+    // socket.on('chat-message-1', onFooEvent);
+    socket.on('chat-message-2', onFooEvent);
+
+    socket.on('chat-message-1', (msg) => {
+      console.log('Message from Server - ' + msg);
+    });
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
-      socket.off('foo', onFooEvent);
+      socket.off('chat-message-1', onFooEvent);
+      socket.off('chat-message-2', onFooEvent);
     };
-  }, []);
+  }, [fooEvents]);
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       {/* row 1 */}
       <Grid item xs={12} sx={{ mb: -2.25 }}>
-        <ConnectionState isConnected={ isConnected } />
-        <Events events={ fooEvents } />
+        <ConnectionState isConnected={isConnected} />
+        <Events events={fooEvents} />
         <ConnectionManager />
         <MyForm />
       </Grid>
